@@ -43,7 +43,7 @@ func TestReadFrom(t *testing.T) {
 	})
 
 	wg.Wait()
-
+	t.Log("start to dial")
 	c1, _ := net.Dial("tcp", "127.0.0.1:9998")
 	c2, _ := net.Dial("tcp", "127.0.0.1:9999")
 
