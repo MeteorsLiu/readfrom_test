@@ -7,6 +7,8 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"golang.org/x/sys/unix"
 )
 
 func newServer(l net.Listener, wg *sync.WaitGroup, f func(net.Conn)) {
@@ -23,6 +25,10 @@ func TestReadFrom(t *testing.T) {
 	// reader
 	go newServer(l1, &wg, func(c net.Conn) {
 		b := make([]byte, 1024)
+		rc, _ := c.(*net.TCPConn).SyscallConn()
+		rc.Control(func(fd uintptr) {
+			unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, 5*1000)
+		})
 		for {
 			_, err := c.Read(b)
 			if err != nil {
@@ -35,6 +41,7 @@ func TestReadFrom(t *testing.T) {
 	go newServer(l2, &wg, func(c net.Conn) {
 		b := make([]byte, 1024)
 		for {
+			time.Sleep(6 * time.Second)
 			_, err := c.Write(b)
 			if err != nil {
 				log.Println("writer: ", err)
@@ -54,7 +61,7 @@ func TestReadFrom(t *testing.T) {
 		log.Println(err)
 	}()
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	log.Println("shutdown c2")
 	c1.SetReadDeadline(time.Now())
 	c2.SetReadDeadline(time.Now())
