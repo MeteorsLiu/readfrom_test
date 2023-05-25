@@ -48,11 +48,11 @@ func TestReadFrom(t *testing.T) {
 	c2, _ := net.Dial("tcp", "127.0.0.1:9999")
 
 	go func() {
-		time.Sleep(10 * time.Second)
-		log.Println("shutdown c2")
-		c2.Close()
+		_, err := io.Copy(c1, c2)
+		log.Println(err)
 	}()
 
-	_, err := io.Copy(c1, c2)
-	log.Println(err)
+	time.Sleep(10 * time.Second)
+	log.Println("shutdown c2")
+	c2.Close()
 }
