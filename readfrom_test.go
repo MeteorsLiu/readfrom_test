@@ -45,8 +45,9 @@ func TestReadFrom(t *testing.T) {
 	t.Log("start to dial")
 	c1, _ := net.Dial("tcp", "127.0.0.1:9998")
 	c2, _ := net.Dial("tcp", "127.0.0.1:9999")
-
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		_, err := io.Copy(c1, c2)
 		log.Println(err)
 	}()
@@ -54,4 +55,5 @@ func TestReadFrom(t *testing.T) {
 	time.Sleep(10 * time.Second)
 	log.Println("shutdown c2")
 	c2.SetReadDeadline(time.Now())
+	wg.Wait()
 }
