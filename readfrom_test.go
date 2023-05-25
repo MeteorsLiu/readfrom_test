@@ -48,11 +48,11 @@ func TestReadFrom(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		_, err := io.Copy(c1, c2)
+		_, err := io.Copy(c2, c1)
 		log.Println(err)
 	}()
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(5 * time.Second)
 	log.Println("shutdown c2")
 	c2.SetReadDeadline(time.Now())
 	wg.Wait()
