@@ -25,10 +25,6 @@ func TestReadFrom(t *testing.T) {
 	// reader
 	go newServer(l1, &wg, func(c net.Conn) {
 		b := make([]byte, 1024)
-		rc, _ := c.(*net.TCPConn).SyscallConn()
-		rc.Control(func(fd uintptr) {
-			unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, 5*1000)
-		})
 		for {
 			_, err := c.Read(b)
 			if err != nil {
@@ -54,6 +50,10 @@ func TestReadFrom(t *testing.T) {
 	t.Log("start to dial")
 	c1, _ := net.Dial("tcp", "127.0.0.1:9998")
 	c2, _ := net.Dial("tcp", "127.0.0.1:9999")
+	rc, _ := c2.(*net.TCPConn).SyscallConn()
+	rc.Control(func(fd uintptr) {
+		unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, 5*1000)
+	})
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
