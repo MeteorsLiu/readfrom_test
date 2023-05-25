@@ -27,6 +27,7 @@ func TestReadFrom(t *testing.T) {
 			_, err := c.Read(b)
 			if err != nil {
 				log.Println("Reader: ", err)
+				return
 			}
 		}
 	})
@@ -37,6 +38,7 @@ func TestReadFrom(t *testing.T) {
 			_, err := c.Write(b)
 			if err != nil {
 				log.Println("writer: ", err)
+				return
 			}
 		}
 	})
@@ -54,6 +56,6 @@ func TestReadFrom(t *testing.T) {
 
 	time.Sleep(5 * time.Second)
 	log.Println("shutdown c2")
-	c2.Close()
+	c2.SetReadDeadline(time.Now())
 	wg.Wait()
 }
