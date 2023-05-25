@@ -50,9 +50,9 @@ func TestReadFrom(t *testing.T) {
 	t.Log("start to dial")
 	c1, _ := net.Dial("tcp", "127.0.0.1:9998")
 	c2, _ := net.Dial("tcp", "127.0.0.1:9999")
-	rc, _ := c1.(*net.TCPConn).SyscallConn()
+	rc, _ := c2.(*net.TCPConn).SyscallConn()
 	rc.Control(func(fd uintptr) {
-		unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, 5*1000)
+		unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, 3*1000)
 	})
 	wg.Add(1)
 	go func() {
