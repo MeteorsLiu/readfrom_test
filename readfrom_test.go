@@ -53,7 +53,7 @@ func TestReadFrom(t *testing.T) {
 	rc, _ := c2.(*net.TCPConn).SyscallConn()
 	rc.Control(func(fd uintptr) {
 		unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, 3*1000)
-		opt, err = unix.GetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT)
+		opt, err := unix.GetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT)
 		t.Log(opt, err)
 	})
 
