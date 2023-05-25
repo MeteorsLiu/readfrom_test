@@ -54,6 +54,6 @@ func TestReadFrom(t *testing.T) {
 
 	time.Sleep(5 * time.Second)
 	log.Println("shutdown c2")
-	c2.SetReadDeadline(time.Now())
+	c2.Close()
 	wg.Wait()
 }
