@@ -9,7 +9,8 @@ import (
 	"time"
 )
 
-func newServer(l net.Listener, f func(net.Conn)) {
+func newServer(l net.Listener, wg *sync.WaitGroup, f func(net.Conn)) {
+	wg.Done()
 	c, _ := l.Accept()
 	f(c)
 }
@@ -20,9 +21,8 @@ func TestReadFrom(t *testing.T) {
 	l2, _ := net.Listen("tcp", "127.0.0.1:9999")
 	wg.Add(2)
 	// reader
-	go newServer(l1, func(c net.Conn) {
+	go newServer(l1, &wg, func(c net.Conn) {
 		b := make([]byte, 1024)
-		wg.Done()
 		for {
 			_, err := c.Read(b)
 			if err != nil {
@@ -31,9 +31,8 @@ func TestReadFrom(t *testing.T) {
 		}
 	})
 	// writer
-	go newServer(l2, func(c net.Conn) {
+	go newServer(l2, &wg, func(c net.Conn) {
 		b := make([]byte, 1024)
-		wg.Done()
 		for {
 			_, err := c.Write(b)
 			if err != nil {
