@@ -54,7 +54,8 @@ func TestReadFrom(t *testing.T) {
 	rc.Control(func(fd uintptr) {
 		unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, 3*1000)
 		opt, err := unix.GetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT)
-		t.Log(opt, err, (5*time.Second)/time.Millisecond)
+		t.Log(opt, err)
+		t.Logf("%d", (5*time.Second)/time.Millisecond)
 	})
 
 	wg.Add(1)
